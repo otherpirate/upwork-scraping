@@ -12,6 +12,7 @@ var SeleniumPath string
 var ChromeDriver string
 var PortSelenium int
 var SeleniumDebug bool
+var StorePath string
 
 func LoadConfigs() {
 	UserName = GetEnvDefault("USERNAME", "bobsuperworker")
@@ -21,6 +22,7 @@ func LoadConfigs() {
 	ChromeDriver = GetEnvDefault("SELENIUM_CHROME_DRIVER_1", "/home/mauromurari/source/upwork-scraping/selenium_files/chromedriver")
 	PortSelenium, _ = strconv.Atoi(GetEnvDefault("SELENIUM_PORT_1", "8099"))
 	SeleniumDebug = GetEnvDefault("SELENIUM_DEBUG", "0") == "1"
+	StorePath = GetEnvDefault("STORE_PATH", "/home/mauromurari/source/upwork-scraping/store_json")
 }
 
 func GetEnvDefault(name, defaultValue string) string {
