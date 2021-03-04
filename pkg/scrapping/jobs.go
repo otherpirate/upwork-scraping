@@ -1,6 +1,7 @@
 package scrapping
 
 import (
+	"strings"
 	"time"
 
 	"github.com/anaskhan96/soup"
@@ -18,13 +19,36 @@ func (u *Upwork) Jobs() ([]models.Job, error) {
 		title := jobSection.Find("h4", "class", "job-title").Find("a")
 		descriptionSection := jobSection.Find("div", "class", "description")
 		resume := descriptionSection.Find("span", "class", "ng-binding")
+		jobType := jobSection.Find("strong", "class", "js-type")
+		postedAt := jobSection.Find("span", "class", "js-posted").Find("time")
+		proposals := jobSection.Find("span", "data-job-proposals", "jsuJobTileMediumController.job.proposalsTier").Find("strong")
+		paymentVerified := jobSection.Find("span", "class", "payment-status")
+		spent := jobSection.Find("span", "class", "client-spendings").Find("strong")
+		location := jobSection.Find("strong", "class", "client-location")
 		job := models.Job{
-			Title:  title.Text(),
-			Link:   title.Attrs()["href"],
-			Resume: Clean(resume.Text()),
+			Title:           title.Text(),
+			Link:            title.Attrs()["href"],
+			Resume:          Clean(resume.Text()),
+			Type:            Clean(jobType.Text()),
+			PostedAt:        postedAt.Attrs()["datetime"],
+			Proposals:       Clean(proposals.Text()),
+			PaymentVerified: paymentVerified.Pointer != nil,
+			Spent:           Clean(spent.Text()),
+			Location:        Clean(location.Text()),
+		}
+		level := jobSection.Find("span", "class", "js-contractor-tier")
+		if level.Pointer != nil {
+			levelStr := strings.Replace(level.Text(), " - ", "", 1)
+			job.Level = Clean(levelStr)
+		}
+		estimate := jobSection.Find("span", "class", "js-duration")
+		if estimate.Pointer != nil {
+			job.Estimate = Clean(estimate.Text())
+		}
+		for _, skill := range jobSection.FindAll("a", "class", "o-tag-skill") {
+			job.Skills = append(job.Skills, Clean(skill.Find("span").Text()))
 		}
 		jobs = append(jobs, job)
-
 	}
 	return jobs, nil
 }
