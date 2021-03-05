@@ -20,8 +20,8 @@ func LoadConfigs() {
 	UserName = GetEnvDefault("USERNAME", "bobsuperworker")
 	Password = GetEnvDefault("PASSWORD", "Argyleawesome123!")
 	SecretAwnser = GetEnvDefault("SECRET_AWNSER", "Bobworker")
-	SeleniumPath = GetEnvDefault("SELENIUM_SERVER_JAR_1", basePath+"/selenium_files/selenium-server.jar")
-	ChromeDriver = GetEnvDefault("SELENIUM_CHROME_DRIVER_1", basePath+"/selenium_files/chromedriver")
+	SeleniumPath = GetEnvDefault("SELENIUM_JAR", basePath+"/selenium_files/selenium-server.jar")
+	ChromeDriver = GetEnvDefault("SELENIUM_DRIVER", basePath+"/selenium_files/chromedriver")
 	PortSelenium, _ = strconv.Atoi(GetEnvDefault("SELENIUM_PORT_1", "8099"))
 	SeleniumDebug = GetEnvDefault("SELENIUM_DEBUG", "0") == "1"
 	StorePath = GetEnvDefault("STORE_PATH", "/tmp/upwork-scrapping/store_json")
