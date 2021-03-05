@@ -42,12 +42,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	//profile, err := upworkScrapping.Profile()
+	profile, err := upworkScrapping.Profile()
 	if err != nil {
 		log.Printf("Could not load profile. Reason %v", err)
 		os.Exit(1)
 	}
-	//err = store.Save(profile.ID, profile)
+	err = store.SaveProfile(profile)
 	if err != nil {
 		log.Printf("Could not save profile. Reason %v", err)
 		os.Exit(1)
