@@ -11,33 +11,34 @@ type Address struct {
 	Country    string `json:"country"`
 }
 
-type Termination struct {
-	Date   string `json:"line1"`
-	Reason string `json:"line2"`
+type Employment struct {
+	Status              string `json:"status"`
+	Type                string `json:"type"`
+	JobTitle            string `json:"job_title"`
+	PlatformUserID      string `json:"platform_user_id"`
+	HireDatetime        string `json:"hire_datetime"`
+	TerminationDatetime string `json:"termination_datetime"`
+	TerminationReason   string `json:"termination_reason"`
 }
 
 type Profile struct {
-	ID               string        `json:"id"`
-	Account          string        `json:"account"`
-	Employer         string        `json:"employer"`
-	CreatedAt        string        `json:"created_at"`
-	UpdatedAt        string        `json:"updated_at"`
-	FirstName        string        `json:"first_name"`
-	LastName         string        `json:"last_name"`
-	FullName         string        `json:"full_name"`
-	Email            string        `json:"email"`
-	PhoneNumber      string        `json:"phone_number"`
-	BirthDate        string        `json:"birth_date"`
-	PictureURL       string        `json:"picture_url"`
-	Address          Address       `json:"address"`
-	EmploymentStatus string        `json:"employment_status"`
-	EmploymentType   string        `json:"employment_type"`
-	JobTitle         string        `json:"job_title"`
-	SSN              string        `json:"ssn"`
-	PlatformUserID   string        `json:"platform_user_id"`
-	Terminations     []Termination `json:"terminations"`
-	MaritalStatus    string        `json:"marital_status"`
-	Gender           string        `json:"gender"`
+	ID            string     `json:"id"`
+	Account       string     `json:"account"`
+	Employer      string     `json:"employer"`
+	CreatedAt     string     `json:"created_at"`
+	UpdatedAt     string     `json:"updated_at"`
+	FirstName     string     `json:"first_name"`
+	LastName      string     `json:"last_name"`
+	FullName      string     `json:"full_name"`
+	Email         string     `json:"email"`
+	PhoneNumber   string     `json:"phone_number"`
+	BirthDate     string     `json:"birth_date"`
+	PictureURL    string     `json:"picture_url"`
+	Address       Address    `json:"address"`
+	Employment    Employment `json:"employment"`
+	SSN           string     `json:"ssn"`
+	MaritalStatus string     `json:"marital_status"`
+	Gender        string     `json:"gender"`
 }
 
 func (p *Profile) SetNames(name string) {

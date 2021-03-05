@@ -30,7 +30,39 @@ func (u *Upwork) loadProfileInfo(profile models.Profile) (models.Profile, error)
 	}
 	doc := soup.HTMLParse(page)
 	publicProfiliLink := doc.Find("div", "role", "group").Find("a")
+	pictureURL := doc.Find("img", "class", "up-avatar")
 	profile.ID = cleanID(publicProfiliLink.Attrs()["href"])
+	profile.PictureURL = pictureURL.Attrs()["src"]
+
+	var jobDiv soup.Root
+	for _, div := range doc.FindAll("div", "class", "up-card") {
+		header := div.Find("h2")
+		if header.Pointer == nil {
+			continue
+		}
+		if strings.Contains(header.Text(), "Employment history") {
+			jobDiv = div
+			break
+		}
+	}
+	if jobDiv.Pointer != nil {
+		jobTitle := jobDiv.Find("h4")
+		jobPeriod := jobDiv.FindAll("div")[10]
+		periods := strings.Split(Clean(jobPeriod.Text()), " - ")
+		hireDatetime := periods[0]
+		terminationDatetime := periods[1]
+		status := "terminated"
+		if terminationDatetime == "Present" {
+			status = "active"
+			terminationDatetime = ""
+		}
+		profile.Employment = models.Employment{
+			Status:              status,
+			JobTitle:            Clean(jobTitle.Text()),
+			HireDatetime:        hireDatetime,
+			TerminationDatetime: terminationDatetime,
+		}
+	}
 	return profile, nil
 }
 
@@ -50,7 +82,8 @@ func (u *Upwork) loadContactInfo(profile models.Profile) (models.Profile, error)
 	addressState := doc.Find("span", "data-test", "addressState")
 	addressPostalCode := doc.Find("span", "data-test", "addressZip")
 	addressCountry := doc.Find("span", "data-test", "addressCountry")
-	profile.PlatformUserID = Clean(userID.Text())
+	profile.Account = Clean(userID.Text())
+	profile.Employer = "upwork"
 	profile.SetNames(Clean(name.Text()))
 	profile.Email = Clean(email.Text())
 	profile.PhoneNumber = Clean(phone.Text())
