@@ -1,4 +1,4 @@
-package utils
+package selenium_service
 
 import (
 	"fmt"
@@ -10,34 +10,45 @@ import (
 	"github.com/tebeka/selenium/chrome"
 )
 
+const stepWait = 2 * time.Second
+
 type SeleniumService struct {
 	service   *selenium.Service
-	WebDriver selenium.WebDriver
+	webDriver selenium.WebDriver
 }
 
 func (s *SeleniumService) Close() {
-	s.WebDriver.Quit()
+	s.webDriver.Quit()
 	s.service.Stop()
 }
 
 func (s *SeleniumService) Navigate(url string) error {
-	return s.WebDriver.Get(url)
+	err := s.webDriver.Get(url)
+	if err != nil {
+		return err
+	}
+	time.Sleep(stepWait)
+	return nil
 }
 
 func (s *SeleniumService) WaitElement(by, value string) (selenium.WebElement, error) {
 	var err error
 	var elem selenium.WebElement
-	for retry := 0; retry < 15; retry++ {
-		elem, err = s.WebDriver.FindElement(by, value)
+	for retry := 0; retry < 5; retry++ {
+		time.Sleep(stepWait)
+		elem, err = s.webDriver.FindElement(by, value)
 		if elem != nil {
 			return elem, err
 		}
-		time.Sleep(1 * time.Second)
 	}
 	return nil, err
 }
 
-func NewSeleniumService() (*SeleniumService, error) {
+func (s *SeleniumService) PageSource() (string, error) {
+	return s.webDriver.PageSource()
+}
+
+func NewService() (*SeleniumService, error) {
 	opts := []selenium.ServiceOption{
 		selenium.StartFrameBuffer(),
 		selenium.ChromeDriver(settings.ChromeDriver),
@@ -67,6 +78,6 @@ func NewSeleniumService() (*SeleniumService, error) {
 	}
 	return &SeleniumService{
 		service:   service,
-		WebDriver: webDriver,
+		webDriver: webDriver,
 	}, nil
 }

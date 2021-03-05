@@ -1,14 +1,15 @@
 package scrapping
 
 import (
+	"log"
 	"strings"
-	"time"
 
 	"github.com/anaskhan96/soup"
 	"github.com/otherpirate/upwork-scraping/pkg/models"
 )
 
 func (u *Upwork) Jobs() ([]models.Job, error) {
+	log.Println("Loading jobs...")
 	jobs := []models.Job{}
 	page, err := u.loadJobPage()
 	if err != nil {
@@ -50,6 +51,7 @@ func (u *Upwork) Jobs() ([]models.Job, error) {
 		}
 		jobs = append(jobs, job)
 	}
+	log.Printf("Jobs loaded %d", len(jobs))
 	return jobs, nil
 }
 
@@ -58,6 +60,5 @@ func (u *Upwork) loadJobPage() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	time.Sleep(stepWait)
-	return u.service.WebDriver.PageSource()
+	return u.service.PageSource()
 }

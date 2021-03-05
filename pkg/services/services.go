@@ -1,0 +1,12 @@
+package services
+
+import (
+	"github.com/tebeka/selenium"
+)
+
+type Service interface {
+	Close()
+	Navigate(url string) error
+	WaitElement(by, value string) (selenium.WebElement, error)
+	PageSource() (string, error)
+}
