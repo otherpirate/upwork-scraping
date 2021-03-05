@@ -61,7 +61,7 @@ func main() {
 
 	for _, job := range jobs {
 		name := slug.Make(job.Title)
-		err = store.Save(name, job)
+		err = store.SaveJob(name, job)
 		if err != nil {
 			log.Printf("Could not save jobs. Reason %v", err)
 			os.Exit(1)
