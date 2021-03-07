@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	log.Println("Starting...")
 	settings.LoadConfigs()
 	store := json_store.NewJSONStore()
 	service, err := selenium_service.NewService()
@@ -34,6 +35,7 @@ func main() {
 
 	keepUp := make(chan bool)
 	queue.Listening(upworkScrapping.Crawler)
+	log.Println("Waiting for messages...")
 	<-keepUp
 	os.Exit(0)
 }
