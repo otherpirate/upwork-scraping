@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/otherpirate/upwork-scraping/pkg/models"
 )
@@ -38,11 +39,36 @@ func (s *StoreJSON) save(filePath string, obj interface{}) error {
 	return ioutil.WriteFile(filePath, json, fileModePerm)
 }
 
+func fileExists(filePath string) bool {
+	_, err := os.Stat(filePath)
+	if err == nil {
+		return true
+	}
+	return false
+}
+
+func loadProfile(filePath string) models.Profile {
+	jsonFile, _ := os.Open(filePath)
+	defer jsonFile.Close()
+	jsonByte, _ := ioutil.ReadAll(jsonFile)
+	profile := models.Profile{}
+	json.Unmarshal(jsonByte, &profile)
+	return profile
+}
+
 func (s *StoreJSON) SaveProfile(profile models.Profile) error {
 	file := fmt.Sprintf("%s/profile/%s.json", s.Path, profile.ID)
+	profile.CreatedAt = time.Now().UTC().Format("2006-01-02T15:04:05.999999Z")
+	profile.UpdatedAt = profile.CreatedAt
+	status := "created"
+	if fileExists(file) {
+		status = "updated"
+		loadedProfile := loadProfile(file)
+		profile.CreatedAt = loadedProfile.CreatedAt
+	}
 	err := s.save(file, profile)
 	if err == nil {
-		log.Printf("Profile saved to %s", file)
+		log.Printf("Profile %s to %s", status, file)
 	} else {
 		log.Printf("Could not save profile %s", profile.ID)
 	}
