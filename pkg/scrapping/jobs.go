@@ -8,7 +8,7 @@ import (
 	"github.com/otherpirate/upwork-scraping/pkg/models"
 )
 
-func (u *Upwork) Jobs() ([]models.Job, error) {
+func (u *Upwork) jobs() ([]models.Job, error) {
 	log.Println("Loading jobs...")
 	jobs := []models.Job{}
 	page, err := u.loadJobPage()

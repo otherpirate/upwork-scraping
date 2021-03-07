@@ -8,7 +8,7 @@ import (
 	"github.com/otherpirate/upwork-scraping/pkg/models"
 )
 
-func (u *Upwork) Profile() (models.Profile, error) {
+func (u *Upwork) profile() (models.Profile, error) {
 	log.Println("Loading profile...")
 	profile := models.Profile{}
 	profile, err := u.loadProfileInfo(profile)
