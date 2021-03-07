@@ -12,17 +12,17 @@ import (
 
 const stepWait = 2 * time.Second
 
-type SeleniumService struct {
+type seleniumService struct {
 	service   *selenium.Service
 	webDriver selenium.WebDriver
 }
 
-func (s *SeleniumService) Close() {
+func (s *seleniumService) Close() {
 	s.webDriver.Quit()
 	s.service.Stop()
 }
 
-func (s *SeleniumService) Navigate(url string) error {
+func (s *seleniumService) Navigate(url string) error {
 	err := s.webDriver.Get(url)
 	if err != nil {
 		return err
@@ -31,7 +31,7 @@ func (s *SeleniumService) Navigate(url string) error {
 	return nil
 }
 
-func (s *SeleniumService) WaitElement(by, value string) (selenium.WebElement, error) {
+func (s *seleniumService) WaitElement(by, value string) (selenium.WebElement, error) {
 	var err error
 	var elem selenium.WebElement
 	for retry := 0; retry < 5; retry++ {
@@ -44,11 +44,11 @@ func (s *SeleniumService) WaitElement(by, value string) (selenium.WebElement, er
 	return nil, err
 }
 
-func (s *SeleniumService) PageSource() (string, error) {
+func (s *seleniumService) PageSource() (string, error) {
 	return s.webDriver.PageSource()
 }
 
-func NewService() (*SeleniumService, error) {
+func NewService() (*seleniumService, error) {
 	opts := []selenium.ServiceOption{
 		selenium.StartFrameBuffer(),
 		selenium.ChromeDriver(settings.ChromeDriver),
@@ -76,7 +76,7 @@ func NewService() (*SeleniumService, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &SeleniumService{
+	return &seleniumService{
 		service:   service,
 		webDriver: webDriver,
 	}, nil

@@ -1,4 +1,4 @@
-package store
+package json_store
 
 import (
 	"encoding/json"
@@ -10,12 +10,19 @@ import (
 	"time"
 
 	"github.com/otherpirate/upwork-scraping/pkg/models"
+	"github.com/otherpirate/upwork-scraping/pkg/settings"
 	"github.com/otherpirate/upwork-scraping/pkg/utils"
 )
 
 const fileModePerm = 0755
 
-type StoreJSON struct {
+func NewJSONStore() *storeJSON {
+	return &storeJSON{
+		Path: settings.StorePath,
+	}
+}
+
+type storeJSON struct {
 	Path string
 }
 
@@ -28,7 +35,7 @@ func createDirectory(path string) error {
 	return err
 }
 
-func (s *StoreJSON) save(filePath string, obj interface{}) error {
+func save(filePath string, obj interface{}) error {
 	err := createDirectory(filePath)
 	if err != nil {
 		return err
@@ -54,7 +61,7 @@ func loadProfile(filePath string) models.Profile {
 	return profile
 }
 
-func (s *StoreJSON) SaveProfile(profile models.Profile) error {
+func (s *storeJSON) SaveProfile(profile *models.Profile) error {
 	file := fmt.Sprintf("%s/profile/%s.json", s.Path, profile.ID)
 	profile.CreatedAt = time.Now().UTC().Format("2006-01-02T15:04:05.999999Z")
 	profile.UpdatedAt = profile.CreatedAt
@@ -64,7 +71,7 @@ func (s *StoreJSON) SaveProfile(profile models.Profile) error {
 		loadedProfile := loadProfile(file)
 		profile.CreatedAt = loadedProfile.CreatedAt
 	}
-	err := s.save(file, profile)
+	err := save(file, *profile)
 	if err == nil {
 		log.Printf("Profile %s to %s", status, file)
 	} else {
@@ -73,9 +80,9 @@ func (s *StoreJSON) SaveProfile(profile models.Profile) error {
 	return err
 }
 
-func (s *StoreJSON) SaveJob(name string, job models.Job) error {
+func (s *storeJSON) SaveJob(name string, job *models.Job) error {
 	file := fmt.Sprintf("%s/jobs/%s.json", s.Path, name)
-	err := s.save(file, job)
+	err := save(file, *job)
 	if err == nil {
 		log.Printf("Job saved to %s", file)
 	} else {

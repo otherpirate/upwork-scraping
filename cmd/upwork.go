@@ -7,16 +7,14 @@ import (
 	"github.com/otherpirate/upwork-scraping/pkg/queue/rabbitmq_queue"
 	"github.com/otherpirate/upwork-scraping/pkg/scrapping"
 	"github.com/otherpirate/upwork-scraping/pkg/services/selenium_service"
+	"github.com/otherpirate/upwork-scraping/pkg/store/json_store"
 
 	"github.com/otherpirate/upwork-scraping/pkg/settings"
-	"github.com/otherpirate/upwork-scraping/pkg/store"
 )
 
 func main() {
 	settings.LoadConfigs()
-	store := store.StoreJSON{
-		Path: settings.StorePath,
-	}
+	store := json_store.NewJSONStore()
 	service, err := selenium_service.NewService()
 	if err != nil {
 		log.Printf("Could not start selenium service. Reason %v", err)

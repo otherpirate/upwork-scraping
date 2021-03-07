@@ -9,24 +9,24 @@ import (
 	"github.com/tebeka/selenium"
 )
 
-type MockService struct {
+type mockService struct {
 	url string
 }
 
-func (s *MockService) Close() {
+func (s *mockService) Close() {
 
 }
 
-func (s *MockService) Navigate(url string) error {
+func (s *mockService) Navigate(url string) error {
 	s.url = url
 	return nil
 }
 
-func (s *MockService) WaitElement(by, value string) (selenium.WebElement, error) {
+func (s *mockService) WaitElement(by, value string) (selenium.WebElement, error) {
 	return mockedElement{}, nil
 }
 
-func (s *MockService) PageSource() (string, error) {
+func (s *mockService) PageSource() (string, error) {
 	path := strings.ReplaceAll(s.url, "https://www.upwork.com/", "")
 	path = strings.ReplaceAll(path, "/", "_")
 	path = fmt.Sprintf("../html_pages/%s.html", path)
@@ -38,8 +38,8 @@ func (s *MockService) PageSource() (string, error) {
 	return string(file), nil
 }
 
-func NewService() (*MockService, error) {
-	return &MockService{}, nil
+func NewService() (*mockService, error) {
+	return &mockService{}, nil
 }
 
 type mockedElement struct {

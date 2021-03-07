@@ -11,11 +11,11 @@ import (
 
 type Upwork struct {
 	service services.Service
-	store   store.StoreJSON
+	store   store.Store
 	queue   queue.Queue
 }
 
-func NewUpWork(service services.Service, store store.StoreJSON, queue queue.Queue) *Upwork {
+func NewUpWork(service services.Service, store store.Store, queue queue.Queue) *Upwork {
 	return &Upwork{
 		service: service,
 		store:   store,
@@ -44,7 +44,7 @@ func (u *Upwork) Crawler(userName, password, secretAwnser string) error {
 		log.Printf("Could not load profile. Reason %v", err)
 		return err
 	}
-	err = u.store.SaveProfile(profile)
+	err = u.store.SaveProfile(&profile)
 	if err != nil {
 		log.Printf("Could not save profile. Reason %v", err)
 		return err
@@ -59,7 +59,7 @@ func (u *Upwork) Crawler(userName, password, secretAwnser string) error {
 
 	for _, job := range jobs {
 		name := slug.Make(job.Title)
-		err = u.store.SaveJob(name, job)
+		err = u.store.SaveJob(name, &job)
 		if err != nil {
 			log.Printf("Could not save jobs. Reason %v", err)
 			return err

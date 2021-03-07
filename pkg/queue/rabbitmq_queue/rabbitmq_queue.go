@@ -10,20 +10,20 @@ import (
 	"github.com/streadway/amqp"
 )
 
-type RabbitQueue struct {
+type rabbitQueue struct {
 	channel      *amqp.Channel
 	queueUser    amqp.Queue
 	queueProfile amqp.Queue
 }
 
-func NewRabbitQueue() (*RabbitQueue, error) {
+func NewRabbitQueue() (*rabbitQueue, error) {
 	conn, err := amqp.Dial(settings.RabbitURI)
 	if err != nil {
-		return &RabbitQueue{}, err
+		return &rabbitQueue{}, err
 	}
 	channel, err := conn.Channel()
 	if err != nil {
-		return &RabbitQueue{}, err
+		return &rabbitQueue{}, err
 	}
 	queueUser, err := channel.QueueDeclare(
 		settings.RabbitQueueUser,
@@ -41,18 +41,18 @@ func NewRabbitQueue() (*RabbitQueue, error) {
 		false, // no-wait
 		nil,   // arguments
 	)
-	return &RabbitQueue{
+	return &rabbitQueue{
 		channel:      channel,
 		queueUser:    queueUser,
 		queueProfile: queueProfile,
 	}, nil
 }
 
-func (q *RabbitQueue) Listening(crawler func(userName, password, secretAwnser string) error) error {
+func (q *rabbitQueue) Listening(crawler func(userName, password, secretAwnser string) error) error {
 	msgs, err := q.channel.Consume(
 		q.queueUser.Name,  // queue
 		"upwork-scraping", // consumer
-		true,              // auto-ack
+		false,             // auto-ack
 		true,              // exclusive
 		false,             // no-local
 		false,             // no-wait
@@ -78,7 +78,7 @@ func (q *RabbitQueue) Listening(crawler func(userName, password, secretAwnser st
 	return nil
 }
 
-func (q *RabbitQueue) Foward(profile models.Profile) error {
+func (q *rabbitQueue) Foward(profile models.Profile) error {
 	json, err := utils.ToJSON(profile)
 	if err != nil {
 		return err
