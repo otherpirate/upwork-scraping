@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/otherpirate/upwork-scraping/pkg/models"
+	"github.com/otherpirate/upwork-scraping/pkg/utils"
 )
 
 const fileModePerm = 0755
@@ -32,10 +33,7 @@ func (s *StoreJSON) save(filePath string, obj interface{}) error {
 	if err != nil {
 		return err
 	}
-	json, err := json.Marshal(obj)
-	if err != nil {
-		return err
-	}
+	json, err := utils.ToJSON(obj)
 	return ioutil.WriteFile(filePath, json, fileModePerm)
 }
 

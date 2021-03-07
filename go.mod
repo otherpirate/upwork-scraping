@@ -7,5 +7,6 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gosimple/slug v1.9.0
 	github.com/hashicorp/go-multierror v1.1.0
+	github.com/streadway/amqp v1.0.0
 	github.com/tebeka/selenium v0.9.9
 )

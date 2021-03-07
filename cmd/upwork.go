@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/otherpirate/upwork-scraping/pkg/queue/rabbitmq_queue"
 	"github.com/otherpirate/upwork-scraping/pkg/scrapping"
 	"github.com/otherpirate/upwork-scraping/pkg/services/selenium_service"
 
@@ -21,10 +22,20 @@ func main() {
 		log.Printf("Could not start selenium service. Reason %v", err)
 		os.Exit(1)
 	}
+	queue, err := rabbitmq_queue.NewRabbitQueue()
+	if err != nil {
+		log.Printf("Could not start queue service. Reason %v", err)
+		os.Exit(1)
+	}
 	upworkScrapping := scrapping.NewUpWork(
 		service,
+		store,
+		queue,
 	)
 	defer upworkScrapping.Finish()
-	upworkScrapping.Crawler(store, settings.UserName, settings.Password, settings.SecretAwnser)
+
+	keepUp := make(chan bool)
+	queue.Listening(upworkScrapping.Crawler)
+	<-keepUp
 	os.Exit(0)
 }
