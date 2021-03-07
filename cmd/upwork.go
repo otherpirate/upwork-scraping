@@ -6,9 +6,10 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/otherpirate/upwork-scraping/pkg/scrapping"
+	"github.com/otherpirate/upwork-scraping/pkg/services/selenium_service"
 
 	//"github.com/otherpirate/upwork-scraping/pkg/services/selenium_service"
-	"github.com/otherpirate/upwork-scraping/pkg/services/mock_service"
+
 	"github.com/otherpirate/upwork-scraping/pkg/settings"
 	"github.com/otherpirate/upwork-scraping/pkg/store"
 )
@@ -18,8 +19,8 @@ func main() {
 	store := store.StoreJSON{
 		Path: settings.StorePath,
 	}
-	//service, err := selenium_service.NewService()
-	service, err := mock_service.NewService()
+	service, err := selenium_service.NewService()
+	//service, err := mock_service.NewService()
 	if err != nil {
 		log.Printf("Could not start selenium service. Reason %v", err)
 		os.Exit(1)
