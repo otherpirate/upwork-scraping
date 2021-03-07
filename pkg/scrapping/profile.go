@@ -48,7 +48,7 @@ func (u *Upwork) loadProfileInfo(profile models.Profile) (models.Profile, error)
 	if jobDiv.Pointer != nil {
 		jobTitle := jobDiv.Find("h4")
 		jobPeriod := jobDiv.FindAll("div")[10]
-		periods := strings.Split(Clean(jobPeriod.Text()), " - ")
+		periods := strings.Split(cleanString(jobPeriod.Text()), " - ")
 		hireDatetime := periods[0]
 		terminationDatetime := periods[1]
 		status := "terminated"
@@ -58,9 +58,9 @@ func (u *Upwork) loadProfileInfo(profile models.Profile) (models.Profile, error)
 		}
 		profile.Employment = models.Employment{
 			Status:              status,
-			JobTitle:            Clean(jobTitle.Text()),
-			HireDatetime:        hireDatetime,
-			TerminationDatetime: terminationDatetime,
+			JobTitle:            cleanString(jobTitle.Text()),
+			HireDatetime:        formatDateTime(hireDatetime),
+			TerminationDatetime: formatDateTime(terminationDatetime),
 		}
 	}
 	return profile, nil
@@ -82,25 +82,20 @@ func (u *Upwork) loadContactInfo(profile models.Profile) (models.Profile, error)
 	addressState := doc.Find("span", "data-test", "addressState")
 	addressPostalCode := doc.Find("span", "data-test", "addressZip")
 	addressCountry := doc.Find("span", "data-test", "addressCountry")
-	profile.Account = Clean(userID.Text())
+	profile.Account = cleanString(userID.Text())
 	profile.Employer = "upwork"
-	profile.SetNames(Clean(name.Text()))
-	profile.Email = Clean(email.Text())
-	profile.PhoneNumber = Clean(phone.Text())
+	profile.SetNames(cleanString(name.Text()))
+	profile.Email = cleanString(email.Text())
+	profile.PhoneNumber = cleanString(phone.Text())
 	profile.Address = models.Address{
-		Line1:      Clean(addressLine1.Text()),
-		Line2:      Clean(addressLine2.Text()),
-		City:       Clean(addressCity.Text()),
-		State:      Clean(addressState.Text())[2:],
-		PostalCode: Clean(addressPostalCode.Text()),
-		Country:    Clean(addressCountry.Text()),
+		Line1:      cleanString(addressLine1.Text()),
+		Line2:      cleanString(addressLine2.Text()),
+		City:       cleanString(addressCity.Text()),
+		State:      cleanString(addressState.Text())[2:],
+		PostalCode: cleanString(addressPostalCode.Text()),
+		Country:    cleanString(addressCountry.Text()),
 	}
 	return profile, nil
-}
-
-func cleanID(url string) string {
-	url = strings.ReplaceAll(url, "?viewMode=1", "")
-	return strings.ReplaceAll(url, "https://www.upwork.com/freelancers/~", "")
 }
 
 func (u *Upwork) loadProfilePage() (string, error) {

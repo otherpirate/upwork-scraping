@@ -29,25 +29,25 @@ func (u *Upwork) Jobs() ([]models.Job, error) {
 		job := models.Job{
 			Title:           title.Text(),
 			Link:            title.Attrs()["href"],
-			Resume:          Clean(resume.Text()),
-			Type:            Clean(jobType.Text()),
+			Resume:          cleanString(resume.Text()),
+			Type:            cleanString(jobType.Text()),
 			PostedAt:        postedAt.Attrs()["datetime"],
-			Proposals:       Clean(proposals.Text()),
+			Proposals:       cleanString(proposals.Text()),
 			PaymentVerified: paymentVerified.Pointer != nil,
-			Spent:           Clean(spent.Text()),
-			Location:        Clean(location.Text()),
+			Spent:           cleanString(spent.Text()),
+			Location:        cleanString(location.Text()),
 		}
 		level := jobSection.Find("span", "class", "js-contractor-tier")
 		if level.Pointer != nil {
 			levelStr := strings.Replace(level.Text(), " - ", "", 1)
-			job.Level = Clean(levelStr)
+			job.Level = cleanString(levelStr)
 		}
 		estimate := jobSection.Find("span", "class", "js-duration")
 		if estimate.Pointer != nil {
-			job.Estimate = Clean(estimate.Text())
+			job.Estimate = cleanString(estimate.Text())
 		}
 		for _, skill := range jobSection.FindAll("a", "class", "o-tag-skill") {
-			job.Skills = append(job.Skills, Clean(skill.Find("span").Text()))
+			job.Skills = append(job.Skills, cleanString(skill.Find("span").Text()))
 		}
 		jobs = append(jobs, job)
 	}
