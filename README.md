@@ -55,3 +55,7 @@ Upwork block me every time, I could just do a single login in hours, so I mocked
 I did not get the full email from user information, I think I can get it after clicking on the edit button (Not done yet)
 
 Since all the HTML is already mocked, is pretty easy to start the unit tests
+
+Once the profile is with the wrong data (i.g password), the message never leaves the queue. We should put a limit of NACKs in messages.
+
+A first step should save user, pwd, and secret on an isolated database, to keep the relevant data storage for a long period. With it, we can refresh user information or get more data once Upwork make it available 
