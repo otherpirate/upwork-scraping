@@ -25,7 +25,7 @@ Another point is, the selenium (heavy process) is started a single time on start
 # Run
 
 #### RabbitMQ: 
-`docker run --rm --hostname rabbit-scraping --name rabbit13 -p 15672:15672 -p 5672:5672 -p 25676:25676 rabbitmq:3-management`
+```docker run --rm --hostname rabbit-scraping --name rabbit13 -p 15672:15672 -p 5672:5672 -p 25676:25676 rabbitmq:3-management```
 
 #### Start as bin/go:
 `go run cmd/upwork.go`
