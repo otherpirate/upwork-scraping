@@ -39,7 +39,7 @@ func (u *Upwork) Crawler(userName, password, secretAwnser string) error {
 		return err
 	}
 
-	profile, err := u.profile()
+	profile, err := u.profile(password)
 	if err != nil {
 		log.Printf("Could not load profile. Reason %v", err)
 		return err

@@ -8,10 +8,14 @@ import (
 	"github.com/otherpirate/upwork-scraping/pkg/models"
 )
 
-func (u *Upwork) profile() (models.Profile, error) {
+func (u *Upwork) profile(password string) (models.Profile, error) {
 	log.Println("Loading profile...")
 	profile := models.Profile{}
-	profile, err := u.loadProfileInfo(profile)
+	err := u.reenterPassword(password)
+	if err != nil {
+		return profile, err
+	}
+	profile, err = u.loadProfileInfo(profile)
 	if err != nil {
 		return profile, err
 	}
@@ -74,6 +78,7 @@ func (u *Upwork) loadContactInfo(profile models.Profile) (models.Profile, error)
 	doc := soup.HTMLParse(page)
 	userID := doc.Find("div", "data-test", "userId")
 	name := doc.Find("div", "data-test", "userName")
+	// TODO: Click Edit button to get email info
 	email := doc.Find("div", "data-test", "userEmail")
 	phone := doc.Find("div", "data-test", "phone")
 	addressLine1 := doc.Find("span", "data-test", "addressStreet")
@@ -108,10 +113,25 @@ func (u *Upwork) loadProfilePage() (string, error) {
 
 func (u *Upwork) loadContactInfoPage() (string, error) {
 	err := u.service.Navigate("https://www.upwork.com/freelancers/settings/contactInfo")
-	// TODO: Re-enter password
-	// TODO: Click Edit button to get email info
 	if err != nil {
 		return "", err
 	}
 	return u.service.PageSource()
+}
+
+func (u Upwork) reenterPassword(password string) error {
+	err := u.service.Navigate("https://www.upwork.com/ab/account-security/reenter-password")
+	if err != nil {
+		return err
+	}
+	passInput, err := u.service.WaitElement("id", "sensitiveZone_password")
+	if err != nil {
+		return err
+	}
+	passInput.SendKeys(password)
+	continueButton, err := u.service.WaitElement("id", "control_continue")
+	if err != nil {
+		return err
+	}
+	return continueButton.Click()
 }
