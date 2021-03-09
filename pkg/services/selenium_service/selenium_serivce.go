@@ -10,7 +10,7 @@ import (
 	"github.com/tebeka/selenium/chrome"
 )
 
-const stepWait = 2 * time.Second
+const stepWait = 10 * time.Second
 
 type seleniumService struct {
 	service   *selenium.Service
