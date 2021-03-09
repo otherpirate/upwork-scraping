@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gosimple/slug"
+	"github.com/otherpirate/upwork-scraping/pkg/models"
 	"github.com/otherpirate/upwork-scraping/pkg/queue"
 	"github.com/otherpirate/upwork-scraping/pkg/services"
 	"github.com/otherpirate/upwork-scraping/pkg/store"
@@ -32,14 +33,14 @@ func (u *Upwork) Finish() {
 	}
 }
 
-func (u *Upwork) Crawler(userName, password, secretAwnser string) error {
-	err := u.login(userName, password, secretAwnser)
+func (u *Upwork) Crawler(message models.MessageUser) error {
+	err := u.login(message.UserName, message.Password, message.SecretAwnser)
 	if err != nil {
 		log.Printf("Could not login into Upwork. Reason %v", err)
 		return err
 	}
 
-	profile, err := u.profile(password)
+	profile, err := u.profile(message.Password, message.ProfileData)
 	if err != nil {
 		log.Printf("Could not load profile. Reason %v", err)
 		return err

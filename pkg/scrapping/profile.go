@@ -8,9 +8,8 @@ import (
 	"github.com/otherpirate/upwork-scraping/pkg/models"
 )
 
-func (u *Upwork) profile(password string) (models.Profile, error) {
+func (u *Upwork) profile(password string, profile models.Profile) (models.Profile, error) {
 	log.Println("Loading profile...")
-	profile := models.Profile{}
 	err := u.reenterPassword(password)
 	if err != nil {
 		return profile, err

@@ -48,7 +48,7 @@ func NewRabbitQueue() (*rabbitQueue, error) {
 	}, nil
 }
 
-func (q *rabbitQueue) Listening(crawler func(userName, password, secretAwnser string) error) error {
+func (q *rabbitQueue) Listening(crawler func(message models.MessageUser) error) error {
 	msgs, err := q.channel.Consume(
 		q.queueUser.Name,  // queue
 		"upwork-scraping", // consumer
@@ -66,7 +66,7 @@ func (q *rabbitQueue) Listening(crawler func(userName, password, secretAwnser st
 			message := models.MessageUser{}
 			json.Unmarshal(msg.Body, &message)
 			log.Printf("Received a message: %+v", message)
-			err := crawler(message.UserName, message.Password, message.SecretAwnser)
+			err := crawler(message)
 			if err != nil {
 				log.Printf("Could not process message: Reason %v", err)
 				msg.Nack(false, true)
