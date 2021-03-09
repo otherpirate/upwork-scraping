@@ -8,30 +8,30 @@ import (
 
 const fileModePerm = 0755
 
-func NewMockStore() mockStore {
-	return mockStore{
-		profiles: map[string]models.Profile{},
-		jobs:     []models.Job{},
+func NewStore() *mockStore {
+	return &mockStore{
+		Profile: models.Profile{},
+		Jobs:    []models.Job{},
 	}
 }
 
 type mockStore struct {
-	profiles map[string]models.Profile
-	jobs     []models.Job
+	Profile models.Profile
+	Jobs    []models.Job
 }
 
 func (s *mockStore) SaveProfile(profile *models.Profile) error {
 	profile.CreatedAt = time.Now().UTC().Format("2006-01-02T15:04:05.999999Z")
 	profile.UpdatedAt = profile.CreatedAt
-	loadedProfile, exists := s.profiles[profile.ID]
-	if exists {
+	loadedProfile := s.Profile
+	if loadedProfile.CreatedAt != "" {
 		profile.CreatedAt = loadedProfile.CreatedAt
 	}
-	s.profiles[profile.ID] = *profile
+	s.Profile = *profile
 	return nil
 }
 
-func (s *mockStore) SaveJob(name string, job models.Job) error {
-	s.jobs = append(s.jobs, job)
+func (s *mockStore) SaveJob(name string, job *models.Job) error {
+	s.Jobs = append(s.Jobs, *job)
 	return nil
 }

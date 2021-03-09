@@ -10,7 +10,8 @@ import (
 )
 
 type mockService struct {
-	url string
+	url          string
+	baseHTMLPath string
 }
 
 func (s *mockService) Close() {
@@ -29,7 +30,7 @@ func (s *mockService) WaitElement(by, value string) (selenium.WebElement, error)
 func (s *mockService) PageSource() (string, error) {
 	path := strings.ReplaceAll(s.url, "https://www.upwork.com/", "")
 	path = strings.ReplaceAll(path, "/", "_")
-	path = fmt.Sprintf("../html_pages/%s.html", path)
+	path = fmt.Sprintf("%s/html_pages/%s.html", s.baseHTMLPath, path)
 	path, _ = filepath.Abs(path)
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -39,7 +40,13 @@ func (s *mockService) PageSource() (string, error) {
 }
 
 func NewService() (*mockService, error) {
-	return &mockService{}, nil
+	return NewServicePath("..")
+}
+
+func NewServicePath(baseHTMLPath string) (*mockService, error) {
+	return &mockService{
+		baseHTMLPath: baseHTMLPath,
+	}, nil
 }
 
 type mockedElement struct {

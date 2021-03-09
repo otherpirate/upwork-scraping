@@ -1,6 +1,7 @@
 package scrapping
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -14,11 +15,11 @@ func (u *Upwork) profile(password string, profile models.Profile) (models.Profil
 	if err != nil {
 		return profile, err
 	}
-	profile, err = u.loadProfileInfo(profile)
+	profile, err = u.loadContactInfo(profile)
 	if err != nil {
 		return profile, err
 	}
-	profile, err = u.loadContactInfo(profile)
+	profile, err = u.loadProfileInfo(profile)
 	if err != nil {
 		return profile, err
 	}
@@ -27,14 +28,12 @@ func (u *Upwork) profile(password string, profile models.Profile) (models.Profil
 }
 
 func (u *Upwork) loadProfileInfo(profile models.Profile) (models.Profile, error) {
-	page, err := u.loadProfilePage()
+	page, err := u.loadProfilePage(profile.ID)
 	if err != nil {
 		return profile, err
 	}
 	doc := soup.HTMLParse(page)
-	publicProfiliLink := doc.Find("div", "role", "group").Find("a")
 	pictureURL := doc.Find("img", "class", "up-avatar")
-	profile.ID = cleanID(publicProfiliLink.Attrs()["href"])
 	profile.PictureURL = pictureURL.Attrs()["src"]
 
 	var jobDiv soup.Root
@@ -75,6 +74,7 @@ func (u *Upwork) loadContactInfo(profile models.Profile) (models.Profile, error)
 		return profile, err
 	}
 	doc := soup.HTMLParse(page)
+	subMenuLinks := doc.FindAll("a", "data-cy", "menu-item-trigger")
 	userID := doc.Find("div", "data-test", "userId")
 	name := doc.Find("div", "data-test", "userName")
 	// TODO: Click Edit button to get email info
@@ -86,6 +86,7 @@ func (u *Upwork) loadContactInfo(profile models.Profile) (models.Profile, error)
 	addressState := doc.Find("span", "data-test", "addressState")
 	addressPostalCode := doc.Find("span", "data-test", "addressZip")
 	addressCountry := doc.Find("span", "data-test", "addressCountry")
+	profile.ID = cleanID(subMenuLinks)
 	profile.Account = cleanString(userID.Text())
 	profile.Employer = "upwork"
 	profile.SetNames(cleanString(name.Text()))
@@ -102,8 +103,8 @@ func (u *Upwork) loadContactInfo(profile models.Profile) (models.Profile, error)
 	return profile, nil
 }
 
-func (u *Upwork) loadProfilePage() (string, error) {
-	err := u.service.Navigate("https://www.upwork.com/freelancers")
+func (u *Upwork) loadProfilePage(profileID string) (string, error) {
+	err := u.service.Navigate(fmt.Sprintf("https://www.upwork.com/freelancers/%s", profileID))
 	if err != nil {
 		return "", err
 	}

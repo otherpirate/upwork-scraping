@@ -15,7 +15,7 @@ import (
 func main() {
 	log.Println("Starting...")
 	settings.LoadConfigs()
-	store := json_store.NewJSONStore()
+	store := json_store.NewStore()
 	service, err := selenium_service.NewService()
 	if err != nil {
 		log.Printf("Could not start selenium service. Reason %v", err)

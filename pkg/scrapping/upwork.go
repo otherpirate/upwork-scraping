@@ -57,7 +57,6 @@ func (u *Upwork) Crawler(message models.MessageUser) error {
 		log.Printf("Could not load jobs. Reason %v", err)
 		return err
 	}
-
 	for _, job := range jobs {
 		name := slug.Make(job.Title)
 		err = u.store.SaveJob(name, &job)

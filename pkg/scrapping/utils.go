@@ -4,6 +4,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/anaskhan96/soup"
 )
 
 func cleanString(value string) string {
@@ -29,9 +31,14 @@ func cleanDoubleSpaces(value string) string {
 	return value
 }
 
-func cleanID(url string) string {
-	url = strings.ReplaceAll(url, "?viewMode=1", "")
-	return strings.ReplaceAll(url, "https://www.upwork.com/freelancers/", "")
+func cleanID(links []soup.Root) string {
+	for _, link := range links {
+		if cleanString(link.Text()) == "Profile" {
+			url := strings.ReplaceAll(link.Attrs()["href"], "?viewMode=1", "")
+			return strings.ReplaceAll(url, "https://www.upwork.com/freelancers/", "")
+		}
+	}
+	return ""
 }
 
 func formatDateTime(date string) string {

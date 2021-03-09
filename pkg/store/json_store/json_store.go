@@ -16,7 +16,7 @@ import (
 
 const fileModePerm = 0755
 
-func NewJSONStore() *storeJSON {
+func NewStore() *storeJSON {
 	return &storeJSON{
 		Path: settings.StorePath,
 	}
