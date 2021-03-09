@@ -57,7 +57,7 @@ I gotta a little confused about the profile API reference, there are a few depre
 Upwork block me every time, I could just do a single login in hours, so I mocked the HTML responses to keep going with the parser
 
 # Future Work
-I did not get the full email from user information, I think I can get it after clicking on the edit button (Not done yet)
+I did not get the full email from user information, I think I can get it after clicking on the edit button
 
 Since all the HTML is already mocked, is pretty easy to start the unit tests
 
