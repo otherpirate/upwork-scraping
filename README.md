@@ -45,6 +45,12 @@ Publish a message in RabbitMQ: http://localhost:15672/#/queues/%2F/upwork-scrapi
 
 `{"username": "bobsuperworker", "password": "Argyleawesome123!", "secret_awnser": "Bobworker"}`
 
+You can also add a field called extra_data in profile format to send extra data about the user (i.g: ssn, gender)
+```
+{"username": "bobsuperworker", "password": "Argyleawesome123!", "secret_awnser": "Bobworker", "extra_data": {"gender": "male", "ssn": "12345"}}
+```
+
+
 ### Outputs
 JSON files gonna be in `/tmp/upwork-scrapping/store_json` to go run and in a docker volume called `docker_store_json` to docker run 
 
