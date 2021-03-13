@@ -7,15 +7,19 @@ Extract jobs and profile info from Upwork logged user
 # Solution
 The main process is:
 1) Login into the Upwork platform with the user given information
-2) Access contact info and profile page to get the user information relevant to Agryle.
-3) Put the extracted data into a JSON model as required [here](https://argyle.com/docs/api-reference/profiles)
-4) Save profile.json to store folder
+2) Access the main page to extract data about jobs, and save it on the jobs store folder
+3) Access contact info and profile page to get the user information relevant to Agryle.
+4) Put the extracted data into a JSON model as required [here](https://argyle.com/docs/api-reference/profiles)
+5) Save profile.json to store folder
 6) Send a message into rabbitMQ queue to all other system knows that we have a new/updated profile 
-5) Access the main page to extract data about jobs, and save it on the jobs store folder
 
-The below process runs to every new message that came from RabbitMQ.
-So we can scale the upwork-scraping based on the size of that queue.
-Another point is, the selenium (heavy process) is started a single time on startup of docker/pod
+The below process runs to every new message that came from RabbitMQ. So we can scale the upwork-scraping based on the size of that queue.
+
+When an error occurs, even in any step of crawler, the message is gonna be requeued [10](https://github.com/otherpirate/upwork-scraping/blob/main/pkg/settings/settings.go#L34) times, if the error keeps going, it will be put in an isolated queue.
+
+I did it because can be a problem in Upwork(maintenance for example) and we can process the message an after momentnt
+
+Another important point is, the selenium (heavy process) is started a single time on startup of docker/pod
 
 # Libs
 * Selenium to crawling/navigation
@@ -62,11 +66,13 @@ I gotta a little confused about the profile API reference, there are a few depre
 
 Upwork block me every time, I could just do a single login in hours, so I mocked the HTML responses to keep going with the parser
 
+My major problem is with "I'm not a robot" page when I access the contact info, I could not get deep into why it is happening. (Maybe selenium, for chrome config, not sure).
+
 # Future Work
 I did not get the full email from user information, I think I can get it after clicking on the edit button
 
-Since all the HTML is already mocked, is pretty easy to start the unit tests
-
-Once the profile is with the wrong data (i.g password), the message never leaves the queue. We should put a limit of NACKs in messages.
-
 A first step should save user, pwd, and secret on an isolated database, to keep the relevant data storage for a long period. With it, we can refresh user information or get more data once Upwork make it available 
+
+Increase the test coverage, I just did a full unit test, checking the profile data. The coverage is good but can be really better, checking errors and corner cases.
+
+
