@@ -11,15 +11,20 @@ import (
 
 func (u *Upwork) profile(password string, profile models.Profile) (models.Profile, error) {
 	log.Println("Loading profile...")
-	err := u.reenterPassword(password)
+
+	profile, err := u.loadProfileID(profile)
 	if err != nil {
 		return profile, err
 	}
-	profile, err = u.loadContactInfo(profile)
+	err = u.reenterPassword(password)
 	if err != nil {
 		return profile, err
 	}
 	profile, err = u.loadProfileInfo(profile)
+	if err != nil {
+		return profile, err
+	}
+	profile, err = u.loadContactInfo(profile)
 	if err != nil {
 		return profile, err
 	}
@@ -68,16 +73,34 @@ func (u *Upwork) loadProfileInfo(profile models.Profile) (models.Profile, error)
 	return profile, nil
 }
 
+func (u *Upwork) loadProfileID(profile models.Profile) (models.Profile, error) {
+	page, err := u.service.PageSource()
+	if err != nil {
+		return profile, err
+	}
+	doc := soup.HTMLParse(page)
+	subMenuLinks := doc.FindAll("a", "class", "media-body")
+	profile.ID = cleanID(subMenuLinks)
+	viewProfileLink, err := u.service.WaitElementText("class name", "media-body", "View Profile")
+	if err != nil {
+		return profile, err
+	}
+	err = viewProfileLink.Click()
+	if err != nil {
+		return profile, err
+	}
+
+	return profile, err
+}
+
 func (u *Upwork) loadContactInfo(profile models.Profile) (models.Profile, error) {
 	page, err := u.loadContactInfoPage()
 	if err != nil {
 		return profile, err
 	}
 	doc := soup.HTMLParse(page)
-	subMenuLinks := doc.FindAll("a", "data-cy", "menu-item-trigger")
 	userID := doc.Find("div", "data-test", "userId")
 	name := doc.Find("div", "data-test", "userName")
-	// TODO: Click Edit button to get email info
 	email := doc.Find("div", "data-test", "userEmail")
 	phone := doc.Find("div", "data-test", "phone")
 	addressLine1 := doc.Find("span", "data-test", "addressStreet")
@@ -86,7 +109,6 @@ func (u *Upwork) loadContactInfo(profile models.Profile) (models.Profile, error)
 	addressState := doc.Find("span", "data-test", "addressState")
 	addressPostalCode := doc.Find("span", "data-test", "addressZip")
 	addressCountry := doc.Find("span", "data-test", "addressCountry")
-	profile.ID = cleanID(subMenuLinks)
 	profile.Account = cleanString(userID.Text())
 	profile.Employer = "upwork"
 	profile.SetNames(cleanString(name.Text()))

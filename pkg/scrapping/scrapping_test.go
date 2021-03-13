@@ -11,11 +11,15 @@ import (
 	"github.com/otherpirate/upwork-scraping/pkg/store/mock_store"
 )
 
-func TestCrawler(t *testing.T) {
+func TestScrapping(t *testing.T) {
 	settings.LoadConfigs()
 	store := mock_store.NewStore()
 	service, _ := mock_service.NewServicePath("../..")
-	message := models.MessageUser{}
+	message := models.MessageUser{
+		UserName:     "123",
+		Password:     "456",
+		SecretAwnser: "789",
+	}
 	queue, _ := mock_queue.NewQueue(message)
 	upworkScrapping := NewUpWork(
 		service,

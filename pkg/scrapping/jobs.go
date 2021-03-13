@@ -25,7 +25,6 @@ func (u *Upwork) jobs() ([]models.Job, error) {
 		proposals := jobSection.Find("span", "data-job-proposals", "jsuJobTileMediumController.job.proposalsTier").Find("strong")
 		paymentVerified := jobSection.Find("span", "class", "payment-status")
 		spent := jobSection.Find("span", "class", "client-spendings").Find("strong")
-		location := jobSection.Find("strong", "class", "client-location")
 		job := models.Job{
 			Title:           title.Text(),
 			Link:            title.Attrs()["href"],
@@ -35,7 +34,10 @@ func (u *Upwork) jobs() ([]models.Job, error) {
 			Proposals:       cleanString(proposals.Text()),
 			PaymentVerified: paymentVerified.Pointer != nil,
 			Spent:           cleanString(spent.Text()),
-			Location:        cleanString(location.Text()),
+		}
+		location := jobSection.Find("strong", "class", "client-location")
+		if location.Pointer != nil {
+			job.Location = cleanString(location.Text())
 		}
 		level := jobSection.Find("span", "class", "js-contractor-tier")
 		if level.Pointer != nil {

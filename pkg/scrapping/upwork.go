@@ -34,23 +34,12 @@ func (u *Upwork) Finish() {
 }
 
 func (u *Upwork) Crawler(message models.MessageUser) error {
+	u.service.Clear()
 	err := u.login(message.UserName, message.Password, message.SecretAwnser)
 	if err != nil {
 		log.Printf("Could not login into Upwork. Reason %v", err)
 		return err
 	}
-
-	profile, err := u.profile(message.Password, message.ProfileData)
-	if err != nil {
-		log.Printf("Could not load profile. Reason %v", err)
-		return err
-	}
-	err = u.store.SaveProfile(&profile)
-	if err != nil {
-		log.Printf("Could not save profile. Reason %v", err)
-		return err
-	}
-	u.queue.Foward(profile)
 
 	jobs, err := u.jobs()
 	if err != nil {
@@ -65,5 +54,16 @@ func (u *Upwork) Crawler(message models.MessageUser) error {
 			return err
 		}
 	}
-	return err
+
+	profile, err := u.profile(message.Password, message.ProfileData)
+	if err != nil {
+		log.Printf("Could not load profile. Reason %v", err)
+		return err
+	}
+	err = u.store.SaveProfile(&profile)
+	if err != nil {
+		log.Printf("Could not save profile. Reason %v", err)
+		return err
+	}
+	return u.queue.Foward(profile)
 }

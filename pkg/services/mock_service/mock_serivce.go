@@ -14,8 +14,10 @@ type mockService struct {
 	baseHTMLPath string
 }
 
-func (s *mockService) Close() {
+func (s *mockService) Clear() {
+}
 
+func (s *mockService) Close() {
 }
 
 func (s *mockService) Navigate(url string) error {
@@ -24,6 +26,10 @@ func (s *mockService) Navigate(url string) error {
 }
 
 func (s *mockService) WaitElement(by, value string) (selenium.WebElement, error) {
+	return mockedElement{}, nil
+}
+
+func (s *mockService) WaitElementText(by, value, text string) (selenium.WebElement, error) {
 	return mockedElement{}, nil
 }
 

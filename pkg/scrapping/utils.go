@@ -33,9 +33,9 @@ func cleanDoubleSpaces(value string) string {
 
 func cleanID(links []soup.Root) string {
 	for _, link := range links {
-		if cleanString(link.Text()) == "Profile" {
-			url := strings.ReplaceAll(link.Attrs()["href"], "?viewMode=1", "")
-			return strings.ReplaceAll(url, "https://www.upwork.com/freelancers/", "")
+		if cleanString(link.Text()) == "View Profile" {
+			url := strings.ReplaceAll(link.Attrs()["href"], "https://www.upwork.com", "")
+			return strings.ReplaceAll(url, "/freelancers/", "")
 		}
 	}
 	return ""
