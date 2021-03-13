@@ -14,6 +14,10 @@ var StorePath string
 var RabbitURI string
 var RabbitQueueUser string
 var RabbitQueueProfile string
+var RabbitQueueRetry string
+var RabbitQueueFailure string
+var CrawlerMaxRetries int64
+var WaitBeforeRequeue int
 
 func LoadConfigs() {
 	basePath, _ := filepath.Abs("../")
@@ -25,6 +29,10 @@ func LoadConfigs() {
 	RabbitURI = GetEnvDefault("RABBIT_URI", "amqp://guest:guest@localhost:5672/")
 	RabbitQueueUser = GetEnvDefault("RABBIT_QUEUE_USER", "upwork-scraping-user")
 	RabbitQueueProfile = GetEnvDefault("RABBIT_QUEUE_USER", "upwork-scraping-profile")
+	RabbitQueueRetry = GetEnvDefault("RABBIT_QUEUE_USER", "upwork-scraping-retry")
+	RabbitQueueFailure = GetEnvDefault("RABBIT_QUEUE_USER", "upwork-scraping-failure")
+	CrawlerMaxRetries, _ = strconv.ParseInt(GetEnvDefault("CRAWLER_MAX_RETRIES", "10"), 10, 64)
+	WaitBeforeRequeue, _ = strconv.Atoi(GetEnvDefault("WAIT_BEFORE_REQUEUE", "5"))
 }
 
 func GetEnvDefault(name, defaultValue string) string {

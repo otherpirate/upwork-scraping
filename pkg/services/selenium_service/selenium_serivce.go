@@ -95,7 +95,7 @@ func NewService() (*seleniumService, error) {
 	configs := make(map[string]interface{})
 	configs["profile.default_content_settings.popup"] = 0
 	configs["browser.cache.disk.enable"] = 0
-	configs["browser.cache.memory.enable"] = 1
+	configs["browser.cache.memory.enable"] = 0
 	configs["browser.cache.offline.enable"] = 0
 	configs["network.http.use-cache"] = 1
 	chromeCaps := chrome.Capabilities{
@@ -104,7 +104,6 @@ func NewService() (*seleniumService, error) {
 			"--disable-dev-shm-usage",
 			"--ignore-certificate-errors",
 			"--allow-insecure-localhost",
-			"--disable-back-forward-cache",
 			"--enable-javascript",
 		},
 	}
